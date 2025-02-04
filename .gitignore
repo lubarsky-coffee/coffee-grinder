@@ -1,3 +1,9 @@
+news.json
+*.xml
+articles/*.html
+articles/*.txt
+audio/*.mp3
+
 # Logs
 logs
 *.log
