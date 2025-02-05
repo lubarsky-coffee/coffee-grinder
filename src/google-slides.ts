@@ -56,6 +56,7 @@ export async function createPresentation() {
 
 export async function addSlide(event) {
 	let newSlideId = nanoid()
+
 	let replace = {
 		'{{title}}': `${event.title} - ${event.source}`,
 		'{{source}}': event.source,
@@ -68,6 +69,7 @@ export async function addSlide(event) {
 		{
 			duplicateObject: {
 				objectId: templateSlideId,
+				insertionIndex: event.sqk + 3,
 				objectIds: {
 					[templateSlideId]: newSlideId,
 				},

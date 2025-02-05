@@ -9,6 +9,7 @@ export let restricted = [
 	'Bloomberg',
 	'Daily Wire',
 	'Le Monde',
+	'Reuters',
 	// scrapping issues
 
 ]
