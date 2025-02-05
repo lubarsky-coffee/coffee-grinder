@@ -21,12 +21,12 @@ export async function summarize(title, text) {
 		assistant_id: assistant.id,
 	})
 	if (run.status === 'completed') {
-		log('tokens used', run.usage.total_tokens)
 		const messages = await openai.beta.threads.messages.list(run.thread_id)
 		// log(run)
 		// log(messages.data[0].content)
 		let json = messages.data[0].content[0].text.value.replace('```json', '').replace('```', '')
 		let res = JSON.parse(json)
+		log('got', res.summary.length, 'chars,', run.usage.total_tokens, 'tokens used')
 		res.delay = run.usage.total_tokens / 30e3 * 60e3
 		return res
 	} else {

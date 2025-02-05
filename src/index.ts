@@ -1,66 +1,126 @@
 import fs from 'fs'
 
 import { log } from './log.ts'
+import { news } from './store.ts'
 import { load } from './load.ts'
+import { restricted } from '../config/agencies.ts'
 import { decodeGoogleNewsUrl } from './decode-google-news-url.ts'
+import { fetchArticle } from './fetch-article.ts'
 import { htmlToText } from './html-to-text.ts'
 import { summarize } from './ai.ts'
 import { speak } from './speech.ts'
-import { fetchArticle } from './fetch-article.ts'
+import { deletePresentation, presentationExists, createPresentation, addSlide } from './google-slides.ts'
+
+if (process.argv[2] === 'fresh') {
+	news.length = 0
+	deletePresentation()
+}
 
 function sleep(ms) {
+	if (ms <= 0) return
 	log('resting', (ms/1e3).toFixed() + 's...')
 	return new Promise(resolve => setTimeout(resolve, ms))
 }
 
-let news = await load()
-let n = news.length
-for (let i = 0; i < n; i++) {
-	let start = Date.now().valueOf()
-	let delay = 0
-	let a = news[i]
-	let id = i + 1
-	log()
-	log(`[${id}/${n}]`, a.title)
+await load()
 
-	if (!a.originalUrl) {
-		log('Decoding URL...')
-		a.originalUrl = await decodeGoogleNewsUrl(a.url)
-		if (a.originalUrl) {
+let toSummarize = news.filter(e => e.summary === undefined)
+
+let stats = { processed: 0, failed: 0 }
+let last = { urlDecode: { time: 0, delay: 15e3 }, ai: { time: 0, delay: 5e3 } }
+for (let i = 0; i < toSummarize.length; i++) {
+	let event = toSummarize[i]
+	log(`\n[${i + 1}/${toSummarize.length}]`, event.articles[0].title)
+	event.id = i + 1
+
+	if (event.summary === undefined) {
+		for (let j = 0; j < event.articles.length; j++) {
+			let a = event.articles[j]
+			if (restricted.includes(a.source)) continue
+
+			await sleep(last.urlDecode.time + last.urlDecode.delay - Date.now())
+			last.urlDecode.delay += 500
+			log('Decoding URL...')
+			last.urlDecode.time = Date.now()
+			a.originalUrl = await decodeGoogleNewsUrl(a.url)
+			if (!a.originalUrl) {
+				await sleep(5*60e3)
+				j--
+				continue
+			}
 			log('got', a.originalUrl)
-			delay = Math.max(delay, 10e3)
-		} else {
-			await sleep(5*60e3)
-			i--
+
+			log('Fetching', a.source, 'article...')
+			let html = await fetchArticle(a.originalUrl)
+			if (!html) continue
+			log('got', html.length, 'chars')
+			fs.writeFileSync(`articles/${i+1}.${j+1}.html`, `<!--\n${a.originalUrl}\n-->${html}`)
+
+			let text = htmlToText(html)
+			fs.writeFileSync(`articles/${i}.${j}.txt`, `${a.title}\n\n${text}`)
+			text = text.slice(text.indexOf(a.title.split(' ')[0]))
+			if (text.length < 500) {
+				log('text too short', text.length)
+				continue
+			}
+
+			await sleep(last.ai.time + last.ai.delay - Date.now())
+			log('Summarizing', text.length, 'chars...')
+			last.ai.time = Date.now()
+			let res = await summarize(a.title, text)
+			last.ai.delay = res.delay
+			delete res.delay
+			if (!res.summary) {
+				log('failed to summarize')
+				continue
+			}
+			Object.assign(event, res, { url: a.originalUrl, source: a.source })
+			stats.processed++
+			break
+		}
+
+		if (!event.summary) {
+			log('failed to process')
+			Object.assign(event, event.articles[0], { summary: '' })
+			stats.failed++
 			continue
 		}
 	}
-	if (a.summary === undefined) {
-		log('Fetching article...')
-		let html = await fetchArticle(a.originalUrl)
-		if (!html) continue
-		fs.writeFileSync(`articles/${id}.html`, html)
-		log('got', html.length, 'bytes')
+}
+log(stats)
 
-		let text = htmlToText(html)
-		fs.writeFileSync(`articles/${id}.txt`, `${a.title}\n\n${text}`)
-		a.originalTitle = a.title
-		text = text.slice(text.indexOf(a.title.split(' ')[0]))
+let toOutput = news.filter(e => !e.sqk && e.summary != undefined)
+let order = a => (a.categoryId ?? 99) * 10 + (a.priority ?? 9)
+toOutput.forEach(e => e.order = order(e))
+toOutput.sort((a, b) => order(a) - order(b))
 
-		log('Summarizing', text.length, 'bytes...')
-		let res = await summarize(a.title, text)
-		delay = Math.max(delay, res.delay)
-		delete res.delay
-		Object.assign(a, res)
+if (!presentationExists()) {
+	news.forEach(e => {
+		e.sqk = 0
+		e.categorySqk = 0
+	})
+	await createPresentation()
+}
 
-		if (a.summary) {
-			log('Speaking', a.summary.length, 'bytes...')
-			await speak(id, a.summary)
-		}
+let sqk = 0
+let categorySqk = news.reduce((categorySqk, e) => {
+	sqk = Math.max(sqk, e.sqk ?? 0)
+	categorySqk[e.categoryId] = Math.max(categorySqk[e.categoryId] ?? 0, e.categorySqk ?? 0)
+	return categorySqk
+}, [])
+
+for (let i = 0; i < toOutput.length; i++) {
+	let event = toOutput[i]
+	log(`\n[${i + 1}/${toOutput.length}]`, event.title)
+	event.categorySqk = ++categorySqk[event.categoryId]
+
+	if (event.summary && !event.audio) {
+		log('Speaking', event.summary.length, 'bytes...')
+		await speak(sqk + 1, event.summary)
+		event.audio = true
 	}
-	let end = Date.now().valueOf()
-	delay -= (end - start)
-	if (delay > 0) {
-		await sleep(Math.max(1e3, delay))
-	}
+
+	log('Adding slide...')
+	await addSlide({ sqk: sqk + 1, ...event })
+	event.sqk = ++sqk
 }

@@ -12,7 +12,7 @@ export let htmlToText = compile({
 		{ selector: 'h4', options: { uppercase: false } },
 		{ selector: 'h5', options: { uppercase: false } },
 		{ selector: 'h6', options: { uppercase: false } },
-		{ selector: 'header', format: 'skip' },
+		// { selector: 'header', format: 'skip' },
 		{ selector: 'img', format: 'skip' },
 		{ selector: 'hr', format: 'skip' },
 		{ selector: 'nav', format: 'skip' },
