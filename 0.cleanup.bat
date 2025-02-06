@@ -1,0 +1,1 @@
+pnpm run cleanup > logs/cleanup.log

@@ -6,7 +6,11 @@
   "type": "module",
   "scripts": {
     "start": "node --env-file=.env --no-warnings src/index.ts",
-    "fresh": "node --env-file=.env --no-warnings src/index.ts fresh"
+    "fresh": "node --env-file=.env --no-warnings src/index.ts fresh",
+    "cleanup": "node --env-file=.env --no-warnings src/cleanup.ts",
+    "load": "node --env-file=.env --no-warnings src/load.ts",
+    "summarize": "node --env-file=.env --no-warnings src/summarize.ts",
+    "output": "node --env-file=.env --no-warnings src/output.ts"
   },
   "keywords": [],
   "author": "",

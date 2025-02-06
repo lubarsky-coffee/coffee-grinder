@@ -11,7 +11,7 @@ const assistant = await openai.beta.assistants.create({
 	model: "gpt-4o",
 })
 
-export async function summarize(title, text) {
+export async function ai(title, text) {
 	for (let i = 0; i < 3; i++) {
 		let thread = await openai.beta.threads.create()
 		const message = await openai.beta.threads.messages.create(thread.id, {
@@ -31,7 +31,7 @@ export async function summarize(title, text) {
 			res.delay = run.usage.total_tokens / 30e3 * 60e3
 			return res
 		} else {
-			log('failed to summarize', run)
+			log('failed to summarize', run.last_error || run)
 		}
 	}
 }

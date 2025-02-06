@@ -1,1 +1,1 @@
-pnpm start > run.log
+pnpm start > logs/incremental.log

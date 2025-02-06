@@ -1,0 +1,1 @@
+pnpm run summarize > logs/summarize.log

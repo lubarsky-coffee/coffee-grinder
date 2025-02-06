@@ -34,7 +34,8 @@ export async function deletePresentation() {
 	presentationId = null
 }
 
-export function presentationExists() {
+export async function presentationExists() {
+	await initialization
 	return presentationId
 }
 
@@ -55,7 +56,7 @@ export async function createPresentation() {
 }
 
 export async function addSlide(event) {
-	let newSlideId = nanoid()
+	let newSlideId = 'n' + nanoid()
 
 	let replace = {
 		'{{title}}': `${event.title} - ${event.source}`,
@@ -69,7 +70,6 @@ export async function addSlide(event) {
 		{
 			duplicateObject: {
 				objectId: templateSlideId,
-				insertionIndex: event.sqk + 3,
 				objectIds: {
 					[templateSlideId]: newSlideId,
 				},
@@ -87,7 +87,13 @@ export async function addSlide(event) {
 				containsText: {	text: `{{cat${event.categoryId}_card${event.categorySqk}}}` },
 				replaceText: String(`${event.sqk} ${event.title}`),
 			}
-		}
+		},
+		{
+			updateSlidesPosition: {
+				slideObjectIds: [templateSlideId],
+				insertionIndex: event.sqk + 3,
+			}
+		},
 	]
 	// log(requests)
 	try {

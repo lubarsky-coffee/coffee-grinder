@@ -1,0 +1,1 @@
+pnpm run output > logs/output.log

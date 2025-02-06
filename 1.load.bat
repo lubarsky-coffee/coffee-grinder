@@ -1,0 +1,1 @@
+pnpm run load > logs/load.log
