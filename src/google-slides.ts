@@ -1,77 +1,82 @@
 import Slides from '@googleapis/slides'
-import Drive from '@googleapis/drive'
 import { nanoid } from 'nanoid'
 
 import { log } from './log.ts'
-import credentials from '../service-account.json' with { type: 'json' }
-import { folderId, templatePresentationId, templateSlideId } from '../config/drive.ts'
+import { sleep } from './sleep.ts'
+import { auth } from './google-auth.ts'
+import { copyFile, deleteFile, findFile } from './google-drive.ts'
+import { folderId, presentationName, templatePresentationId, templateSlideId, templateTableId } from '../config/google-drive.ts'
 
-let slides, drive, presentationId
-
-async function init() {
-	const auth = new Slides.auth.JWT({
-		email: credentials.client_email,
-		key: credentials.private_key,
-		scopes: [
-			'https://www.googleapis.com/auth/drive',
-			'https://www.googleapis.com/auth/presentations',
-		],
-	})
-	await auth.authorize()
-	slides = Slides.slides({ version: 'v1', auth })
-	drive = Drive.drive({ version: 'v3', auth })
-	let files = (await drive.files.list({
-		q: `'${folderId}' in parents and name = 'today'`,
-	})).data.files
-	presentationId = files[0]?.id
+let slides, presentationId
+async function initialize() {
+	slides = await Slides.slides({ version: 'v1', auth })
+	presentationId = (await findFile(folderId, 'today'))?.id
 }
-let initialization = init()
+let init = initialize()
 
 export async function deletePresentation() {
-	await initialization
+	await init
 	if (!presentationId) return
-	await drive.files.delete({ fileId: presentationId })
+	log('Deleting presentation...')
+	await deleteFile(presentationId)
 	presentationId = null
 }
 
 export async function presentationExists() {
-	await initialization
+	await init
 	return presentationId
 }
 
 export async function createPresentation() {
-	await initialization
+	await init
 	if (!presentationId) {
 		log('Creating presentation...\n')
-		let res = await drive.files.copy({
-			fileId: templatePresentationId,
-			requestBody: {
-				name: 'today',
-				parents: [folderId],
-			},
-		})
-		presentationId = res.data.id
+		presentationId = (await copyFile(templatePresentationId, folderId, presentationName)).id
 	}
 	return presentationId
 }
 
 export async function addSlide(event) {
-	let newSlideId = 'n' + nanoid()
-
+	let newSlideId = 's' + nanoid()
+	// let newTableId = 't' + nanoid()
+	let { title } = event
+	if (!title.endsWith(event.source)) {
+		title += ` - ${event.source}`
+	}
 	let replace = {
-		'{{title}}': `${event.title} - ${event.source}`,
+		'{{title}}': title,
 		'{{source}}': event.source,
 		'https://original.url': event.url,
-		'{{summary}}': `${event.summary}\n${event.url}`,
+		'{{summary}}': event.summary,
 		'{{sqk}}': event.sqk,
 		'{{categoryId}}': event.categoryId,
+		'{{priority}}': event.priority,
 	}
 	let requests = [
+		{
+			updateTextStyle: {
+				fields: 'link',
+				objectId: templateTableId,
+				cellLocation: {
+					rowIndex: 0,
+					columnIndex: 0
+				},
+				textRange: {
+					type: "FIXED_RANGE",
+					startIndex: 0,
+					endIndex: 9 //title.length,
+				},
+				style: {
+					link: {	url: event.url },
+				},
+			},
+		},
 		{
 			duplicateObject: {
 				objectId: templateSlideId,
 				objectIds: {
 					[templateSlideId]: newSlideId,
+					// [templateTableId]: newTableId,
 				},
 			}
 		},
@@ -96,13 +101,25 @@ export async function addSlide(event) {
 		},
 	]
 	// log(requests)
-	try {
-		const result = await slides.presentations.batchUpdate({
-			presentationId,
-			requestBody: { requests },
-		})
-		// log(result)
-	} catch (e) {
-		log(e)
+	for (let i = 0; i < 3; i++) {
+		try {
+			const result = await slides.presentations.batchUpdate({
+				presentationId,
+				requestBody: { requests },
+			})
+			return
+			// log(result)
+		} catch (e) {
+			log(e)
+			await sleep(60e3)
+		}
 	}
+}
+
+if (process.argv[1].endsWith('google-slides.ts')) {
+	// await init
+	// const res = await slides.presentations.get({ presentationId: templatePresentationId })
+	// console.log(JSON.stringify(res.data.slides[res.data.slides.length - 1], null, 2))
+	// const res = await slides.presentations.get({ presentationId: presentationId })
+	// console.log(res.data.slides[res.data.slides.length - 2])
 }

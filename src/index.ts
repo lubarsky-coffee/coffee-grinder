@@ -6,7 +6,6 @@ import { output } from './output.ts'
 if (process.argv[2] === 'fresh') {
 	cleanup()
 }
-
 await load()
 await summarize()
 await output()

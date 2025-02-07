@@ -11,6 +11,9 @@ importers:
       '@googleapis/drive':
         specifier: ^8.14.0
         version: 8.14.0
+      '@googleapis/sheets':
+        specifier: ^9.3.1
+        version: 9.3.1
       '@googleapis/slides':
         specifier: ^1.2.0
         version: 1.2.0
@@ -23,6 +26,9 @@ importers:
       elevenlabs:
         specifier: ^1.50.4
         version: 1.50.4
+      google-auth-library:
+        specifier: ^9.15.1
+        version: 9.15.1
       html-to-text:
         specifier: ^9.0.5
         version: 9.0.5
@@ -77,6 +83,10 @@ packages:
 
   '@googleapis/drive@8.14.0':
     resolution: {integrity: sha512-AOokfpP6pCdcJXWA8khaCEgbGpWYavWTdAAhL4idbbf2VCQcJ2f7vPalAYNu6a4Sfj0Ly4Ehnd1xw9J9TixB1A==}
+    engines: {node: '>=12.0.0'}
+
+  '@googleapis/sheets@9.3.1':
+    resolution: {integrity: sha512-nPgzOiDs/FSFhE+dX2KfkmsmkXM3WfXYP06FoW8cXvHshwxHSI3FbXwe5XJYstDAWXP9YA7AMSvmwnuD4OAl2w==}
     engines: {node: '>=12.0.0'}
 
   '@googleapis/slides@1.2.0':
@@ -665,6 +675,13 @@ snapshots:
   '@csstools/css-tokenizer@3.0.3': {}
 
   '@googleapis/drive@8.14.0':
+    dependencies:
+      googleapis-common: 7.2.0
+    transitivePeerDependencies:
+      - encoding
+      - supports-color
+
+  '@googleapis/sheets@9.3.1':
     dependencies:
       googleapis-common: 7.2.0
     transitivePeerDependencies:

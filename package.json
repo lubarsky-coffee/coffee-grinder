@@ -17,10 +17,12 @@
   "license": "ISC",
   "dependencies": {
     "@googleapis/drive": "^8.14.0",
+    "@googleapis/sheets": "^9.3.1",
     "@googleapis/slides": "^1.2.0",
     "@types/node": "^22.13.0",
     "axios": "^1.7.9",
     "elevenlabs": "^1.50.4",
+    "google-auth-library": "^9.15.1",
     "html-to-text": "^9.0.5",
     "jsdom": "^26.0.0",
     "nanoid": "^5.0.9",

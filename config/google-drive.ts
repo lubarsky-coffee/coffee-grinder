@@ -1,0 +1,7 @@
+export let spreadsheetId = '19Bt7Kov-1lUfc3bOJ-dNkBcTkQPhLMV2W135x0nlctA'
+export let sheetName = 'news'
+export let folderId = '1nJnHBcY252xqV0JDIidsxxhJkY6-w2WO'
+export let templatePresentationId = '1ml6mqzx-mzL9v86-cppjFplrI-l4mIQq1JvQ0OaxFek'
+export let templateSlideId = 'p'
+export let templateTableId = 'g32d1f8c10a8_0_0'
+export let presentationName = 'today'

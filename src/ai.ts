@@ -1,7 +1,7 @@
 import OpenAI from 'openai'
 
 import { log } from './log.ts'
-import { summarizer as instructions } from '../config/instructions.ts'
+import { summarizer as instructions } from '../config/ai-instructions.ts'
 
 let openai = new OpenAI()
 
