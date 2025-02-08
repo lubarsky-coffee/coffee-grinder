@@ -32,8 +32,9 @@ export async function saveSheet(spreadsheetId, range, data) {
 	await init
 	const updatedData = [
 		headers,
-		...data.map(o => headers.map(h => o[h])),
+		...data.map(o => headers.map(h => o[h] ?? '')),
 	]
+	// log({ updatedData })
 	const res = await sheets.values.update({
 		spreadsheetId,
 		range,

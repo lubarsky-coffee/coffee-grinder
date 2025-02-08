@@ -1,5 +1,6 @@
 import { proxy, subscribe } from 'valtio/vanilla'
 
+import { log } from './log.ts'
 import { loadSheet, saveSheet } from './google-sheets.ts'
 import { spreadsheetId, sheetName } from '../config/google-drive.ts'
 
@@ -11,10 +12,14 @@ export let news = []
 // subscribe(news, () => fs.writeFileSync('news.json', JSON.stringify(news, null, 2)))
 news = await loadSheet(spreadsheetId, sheetName)
 news = proxy(news)
-subscribe(news, () => {
+subscribe(news, save)
+
+export async function save() {
 	try {
-		saveSheet(spreadsheetId, sheetName, news)
+		// log('Saving...')
+		await saveSheet(spreadsheetId, sheetName, news)
+		// log('saved')
 	} catch(e) {
-		console.log('Failed to save', e)
+		log('Failed to save', e)
 	}
-})
+}
