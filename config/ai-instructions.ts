@@ -28,8 +28,6 @@ Assign the article to one of the following topics:
   - At a party in Florida, 100 drunken children aged 5 to 11 were found at a school director's house.
   - The British Navy mistook whale farts for Russian spy devices.
 
-9. "other" - Any news that does not fit into the above topics.
-
 Also, assign a priority to the article from 1 (highest) to 10 (lowest).
 The higher the priority, the more new, impactful and entertaining the article is for readers from US and Ukraine.
 Priorities are specific to each topic - articles within a topic should split evenly between priorities.

@@ -19,7 +19,7 @@ export async function summarize() {
 	}
 	for (let i = 0; i < list.length; i++) {
 		let e = list[i]
-		log(`\n#${e.id} (${i + 1}/${list.length})`, e.titleEn)
+		log(`\n[${i + 1}/${list.length}] (#${e.id})`, e.titleEn)
 
 		if (!e.directUrl && !restricted.includes(e.source)) {
 			await sleep(last.urlDecode.time + last.urlDecode.delay - Date.now())

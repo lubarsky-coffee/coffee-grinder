@@ -11,4 +11,10 @@ export let news = []
 // subscribe(news, () => fs.writeFileSync('news.json', JSON.stringify(news, null, 2)))
 news = await loadSheet(spreadsheetId, sheetName)
 news = proxy(news)
-subscribe(news, () => saveSheet(spreadsheetId, sheetName, news))
+subscribe(news, () => {
+	try {
+		saveSheet(spreadsheetId, sheetName, news)
+	} catch(e) {
+		console.log('Failed to save', e)
+	}
+})

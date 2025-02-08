@@ -5,30 +5,45 @@ import { news } from './store.ts'
 import { speak } from './speech.ts'
 import { presentationExists, createPresentation, addSlide } from './google-slides.ts'
 
+let topics = {
+	'Big picture': { id: 1, max: 6 },
+	'Trump':  { id: 2, max: 24 },
+	'Coffee grounds':  { id: 3, max: 6 },
+	'Left reaction':  { id: 4, max: 6 },
+	'Ukraine':  { id: 5, max: 24 },
+	'Marasmus':  { id: 6, max: 6 },
+	'World':  { id: 7, max: 24 },
+	'WTF':  { id: 8, max: 6 },
+	'Blitz':  { id: 9, max: 6 },
+	'Tech':  { id: 10, max: 6 },
+	'Crazy':  { id: 11, max: 6 },
+}
+
 export async function output() {
 	log()
 	if (!await presentationExists()) {
 		news.forEach(e => {
 			delete e.sqk
-			delete e.categorySqk
+			delete e.topicSqk
 		})
 		await createPresentation()
 	}
 
-	let list = news.filter(e => !e.sqk && e.summary != undefined)
-	// let order = a => (a.categoryId ?? 99) * 10 + (a.priority ?? 9)
-	// list.sort((a, b) => order(a) - order(b))
+	let list = news.filter(e => !e.sqk && e.titleRu)
+	let order = e => (topics[e.topic]?.id ?? 99) * 10 + (e.priority ?? 99)
+	list.forEach(e => e.order = order(e))
+	list.sort((a, b) => order(a) - order(b))
 
 	let sqk = 0
-	let categorySqk = news.reduce((categorySqk, e) => {
+	let topicSqk = news.reduce((topicSqk, e) => {
 		sqk = Math.max(sqk, e.sqk ?? 0)
-		categorySqk[e.categoryId] = Math.max(categorySqk[e.categoryId] ?? 0, e.categorySqk ?? 0)
-		return categorySqk
-	}, [])
+		topicSqk[e.topic] = Math.max(topicSqk[e.topic] ?? 0, e.topicSqk ?? 0)
+		return topicSqk
+	}, {})
 
 	for (let i = 0; i < list.length; i++) {
 		let event = list[i]
-		log(`\n[${i + 1}/${list.length}]`, event.title)
+		log(`\n [${i + 1}/${list.length}] (#${event.id} ${event.topic} ${event.priority}`, `${sqk + 1}. ${event.titleRu}`)
 
 		// if (event.summary && !event.sqk) {
 		// 	log('Speaking', event.summary.length, 'bytes...')
@@ -36,12 +51,18 @@ export async function output() {
 		// }
 
 		log('Adding slide...')
-		event.categorySqk = ++categorySqk[event.categoryId]
-		await addSlide({ sqk: sqk + 1, ...event })
+		event.topicSqk = ++topicSqk[event.topic]
+		let notes = event.topicSqk > (topics[event.topic]?.max ?? 0) ? 'NOT INDEXED' : ''
+		await addSlide({
+			sqk: sqk + 1,
+			topicId: topics[event.topic]?.id,
+			notes,
+			...event,
+		 })
 		event.sqk = ++sqk
 	}
 
-	let screenshots = news.map(e => `${e.sqk}\n${e.url}\n`).join('')
+	let screenshots = news.map(e => `${e.sqk}\n${e.directUrl || e.url}\n`).join('')
 	fs.writeFileSync('screenshots.txt', screenshots)
 }
 

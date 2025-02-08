@@ -38,19 +38,13 @@ export async function createPresentation() {
 
 export async function addSlide(event) {
 	let newSlideId = 's' + nanoid()
-	// let newTableId = 't' + nanoid()
-	let { title } = event
-	if (!title.endsWith(event.source)) {
-		title += ` - ${event.source}`
-	}
+	let title = `${event.titleRu} | ${event.source}`
 	let replace = {
 		'{{title}}': title,
-		'{{source}}': event.source,
-		'https://original.url': event.url,
 		'{{summary}}': event.summary,
 		'{{sqk}}': event.sqk,
-		'{{categoryId}}': event.categoryId,
 		'{{priority}}': event.priority,
+		'{{notes}}': event.notes,
 	}
 	let requests = [
 		{
@@ -64,10 +58,12 @@ export async function addSlide(event) {
 				textRange: {
 					type: "FIXED_RANGE",
 					startIndex: 0,
-					endIndex: 9 //title.length,
+					endIndex: 9,
 				},
 				style: {
-					link: {	url: event.url },
+					link: {
+						url: event.directUrl || event.url
+					},
 				},
 			},
 		},
@@ -89,8 +85,8 @@ export async function addSlide(event) {
 		})),
 		{
 			replaceAllText: {
-				containsText: {	text: `{{cat${event.categoryId}_card${event.categorySqk}}}` },
-				replaceText: String(`${event.sqk} ${event.title}`),
+				containsText: {	text: `{{cat${event.topicId}_card${event.topicSqk}}}` },
+				replaceText: String(`${event.sqk} ${title}`),
 			}
 		},
 		{
