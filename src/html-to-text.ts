@@ -5,7 +5,7 @@ export let htmlToText = compile({
 		{ selector: 'a', options: { ignoreHref: true } },
 		{ selector: 'aside', format: 'skip' },
 		{ selector: 'footer', format: 'skip' },
-		{ selector: 'form', format: 'skip' },
+		// { selector: 'form', format: 'skip' },
 		{ selector: 'h1', options: { uppercase: false } },
 		{ selector: 'h2', options: { uppercase: false } },
 		{ selector: 'h3', options: { uppercase: false } },
