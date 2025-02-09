@@ -62,7 +62,7 @@ export async function output() {
 		event.sqk = sqk++
 	}
 
-	let screenshots = news.map(e => `${e.sqk}\n${e.directUrl || e.url}\n`).join('')
+	let screenshots = list.map(e => `${e.sqk}\n${e.directUrl || e.url}\n`).join('')
 	fs.writeFileSync('screenshots.txt', screenshots)
 }
 
