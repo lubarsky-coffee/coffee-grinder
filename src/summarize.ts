@@ -68,7 +68,7 @@ export async function summarize() {
 		await sleep(last.ai.time + last.ai.delay - Date.now())
 		last.ai.time = Date.now()
 		log('Summarizing', text.length, 'chars...')
-		let res = await ai(e.titleEn, text)
+		let res = await ai(e.titleEn, e.source, text)
 		if (res) {
 			last.ai.delay = res.delay
 			delete res.delay

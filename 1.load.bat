@@ -1,1 +1,1 @@
-pnpm run load > logs/load.log
+npm run load > logs/load.log

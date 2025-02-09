@@ -1,1 +1,1 @@
-pnpm run summarize > logs/summarize.log
+npm run summarize > logs/summarize.log

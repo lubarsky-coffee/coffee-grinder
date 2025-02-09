@@ -14,4 +14,5 @@ export let restricted = [
 	'POLITICO',
 	'The Hill',
 	'Axios',
+	'Fortune',
 ]

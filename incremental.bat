@@ -1,1 +1,1 @@
-pnpm start > logs/incremental.log
+npm start > logs/incremental.log

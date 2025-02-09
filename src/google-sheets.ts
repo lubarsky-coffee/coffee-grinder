@@ -10,10 +10,23 @@ async function initialize() {
 }
 let init = initialize()
 
-export async function loadSheet(spreadsheetId, range) {
+export async function load(spreadsheetId, range) {
 	await init
 	const res = await sheets.values.get({ spreadsheetId, range })
-	const rows = res.data.values
+	return res.data.values
+}
+
+export async function save(spreadsheetId, range, data) {
+	return await sheets.values.update({
+		spreadsheetId,
+		range,
+		valueInputOption: 'RAW',
+		requestBody: { values: data },
+	})
+}
+
+export async function loadTable(spreadsheetId, range) {
+	const rows = await load(spreadsheetId, range)
 	// log('Data from sheet:', rows)
 	const headers = rows[0]
 	const data = rows.slice(1).map(row => {
@@ -27,7 +40,7 @@ export async function loadSheet(spreadsheetId, range) {
 	return data
 }
 
-export async function saveSheet(spreadsheetId, range, data) {
+export async function saveTable(spreadsheetId, range, data) {
 	let { headers } = data
 	await init
 	const updatedData = [
@@ -35,10 +48,5 @@ export async function saveSheet(spreadsheetId, range, data) {
 		...data.map(o => headers.map(h => o[h] ?? '')),
 	]
 	// log({ updatedData })
-	const res = await sheets.values.update({
-		spreadsheetId,
-		range,
-		valueInputOption: 'RAW',
-		requestBody: { values: updatedData },
-	})
+	return await save(spreadsheetId, range, updatedData)
 }

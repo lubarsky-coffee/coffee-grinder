@@ -1,1 +1,1 @@
-pnpm run output > logs/output.log
+npm run output > logs/output.log

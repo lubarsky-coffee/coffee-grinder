@@ -1,1 +1,1 @@
-pnpm run cleanup > logs/cleanup.log
+npm run cleanup > logs/cleanup.log

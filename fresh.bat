@@ -1,1 +1,1 @@
-pnpm run fresh > logs/fresh.log
+npm run fresh > logs/fresh.log
