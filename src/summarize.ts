@@ -9,6 +9,19 @@ import { fetchArticle } from './fetch-article.ts'
 import { htmlToText } from './html-to-text.ts'
 import { ai } from './ai.ts'
 
+let topics = {
+	'Trump': '02. Trump',
+	'US': '03. US',
+	'Left reaction': '04. Left reaction',
+	'Ukraine': '05. Ukraine',
+	'Coffee grounds': '06. Coffee grounds',
+	'World': '07. World',
+	'Marasmus': '08. Marasmus',
+	'Tech':	'10. Tech',
+	'Crazy': '11. Crazy',
+	'other': 'other',
+}
+
 export async function summarize() {
 	let list = news.filter(e => !e.titleRu)
 
@@ -19,7 +32,7 @@ export async function summarize() {
 	}
 	for (let i = 0; i < list.length; i++) {
 		let e = list[i]
-		log(`\n[${i + 1}/${list.length}] (#${e.id})`, e.titleEn)
+		log(`\n${i + 1}/${list.length} #${e.id}`, e.titleEn)
 
 		if (!e.directUrl && !restricted.includes(e.source)) {
 			await sleep(last.urlDecode.time + last.urlDecode.delay - Date.now())
@@ -59,8 +72,9 @@ export async function summarize() {
 		if (res) {
 			last.ai.delay = res.delay
 			delete res.delay
+			res.topic = topics[res.topic]
+			Object.assign(e, res)
 		}
-		Object.assign(e, res)
 		if (!text || !e.summary) {
 			log('failed to summarize')
 			e.summary = ''

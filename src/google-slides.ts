@@ -92,7 +92,7 @@ export async function addSlide(event) {
 		{
 			updateSlidesPosition: {
 				slideObjectIds: [templateSlideId],
-				insertionIndex: event.sqk + 3,
+				insertionIndex: event.sqk + 1,
 			}
 		},
 	]
