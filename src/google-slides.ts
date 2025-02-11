@@ -4,13 +4,13 @@ import { nanoid } from 'nanoid'
 import { log } from './log.ts'
 import { sleep } from './sleep.ts'
 import { auth } from './google-auth.ts'
-import { copyFile, deleteFile, findFile } from './google-drive.ts'
-import { folderId, presentationName, templatePresentationId, templateSlideId, templateTableId } from '../config/google-drive.ts'
+import { copyFile, trashFile, getFile } from './google-drive.ts'
+import { rootFolderId, presentationName, templatePresentationId, templateSlideId, templateTableId } from '../config/google-drive.ts'
 
 let slides, presentationId
 async function initialize() {
 	slides = await Slides.slides({ version: 'v1', auth })
-	presentationId = (await findFile(folderId, 'today'))?.id
+	presentationId = (await getFile(rootFolderId, 'today'))?.id
 }
 let init = initialize()
 
@@ -18,7 +18,7 @@ export async function deletePresentation() {
 	await init
 	if (!presentationId) return
 	log('Deleting presentation...')
-	await deleteFile(presentationId)
+	await trashFile(presentationId)
 	presentationId = null
 }
 
@@ -31,14 +31,15 @@ export async function createPresentation() {
 	await init
 	if (!presentationId) {
 		log('Creating presentation...\n')
-		presentationId = (await copyFile(templatePresentationId, folderId, presentationName)).id
+		presentationId = (await copyFile(templatePresentationId, rootFolderId, presentationName)).id
 	}
 	return presentationId
 }
 
 export async function addSlide(event) {
 	let newSlideId = 's' + nanoid()
-	let title = `${event.titleRu} | ${event.source}`
+	// let title = `${event.titleEn || event.titleRu} | ${event.source}`
+	let title = `${event.titleEn || event.titleRu}`
 	let replace = {
 		'{{title}}': title,
 		'{{summary}}': event.summary,
@@ -92,7 +93,7 @@ export async function addSlide(event) {
 		{
 			updateSlidesPosition: {
 				slideObjectIds: [templateSlideId],
-				insertionIndex: event.sqk + 1,
+				insertionIndex: +event.sqk + 1,
 			}
 		},
 	]

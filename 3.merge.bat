@@ -1,0 +1,1 @@
+npm run merge > logs/merge.log

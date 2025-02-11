@@ -10,7 +10,17 @@ async function initialize() {
 }
 let init = initialize()
 
-export async function findFile(folderId, name) {
+export async function createFolder(folderId, name) {
+	await init
+	const file = await drive.files.create({	resource: {
+		'parents': [folderId],
+		name,
+		'mimeType': 'application/vnd.google-apps.folder',
+	}})
+    return file.data.id
+}
+
+export async function getFile(folderId, name) {
 	await init
 	let files = (await drive.files.list({
 		q: `'${folderId}' in parents and name = '${name}'`,
@@ -18,9 +28,9 @@ export async function findFile(folderId, name) {
 	return files[0]
 }
 
-export async function deleteFile(fileId) {
+export async function trashFile(fileId) {
 	await init
-	return drive.files.delete({ fileId })
+	return drive.files.trash({ fileId })
 }
 
 export async function copyFile(fileId, folderId, name) {

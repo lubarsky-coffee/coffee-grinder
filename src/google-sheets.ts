@@ -20,7 +20,8 @@ export async function save(spreadsheetId, range, data) {
 	return await sheets.values.update({
 		spreadsheetId,
 		range,
-		valueInputOption: 'RAW',
+		// valueInputOption: 'RAW',
+		valueInputOption: 'USER_ENTERED',
 		requestBody: { values: data },
 	})
 }

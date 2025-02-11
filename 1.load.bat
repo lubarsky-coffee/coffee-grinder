@@ -1,1 +1,0 @@
-npm run load > logs/load.log

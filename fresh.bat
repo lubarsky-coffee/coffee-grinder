@@ -1,1 +1,0 @@
-npm run fresh > logs/fresh.log

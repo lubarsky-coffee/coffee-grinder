@@ -1,1 +1,0 @@
-npm start > logs/incremental.log

@@ -1,6 +1,7 @@
 import OpenAI from 'openai'
 
 import { log } from './log.ts'
+import { sleep } from './sleep.ts'
 import { load } from './google-sheets.ts'
 import { spreadsheetId, aiSheet } from '../config/google-drive.ts'
 
@@ -16,14 +17,19 @@ async function initialize() {
 }
 let init = initialize()
 
-export async function ai(title, source, text) {
+export async function ai({ url, titleEn, titleRu, text, source }) {
 	await init
 	for (let i = 0; i < 3; i++) {
 		let thread = await openai.beta.threads.create()
-		title = title.replace(` - ${source}`, '')
+		let title = titleEn || titleRu
+		let content = ''
+		if (url) content += `URL: ${url}\n`
+		if (title) content += `Title: ${title}\n`
+		if (source) content += `Source: ${source}\n`
+		content += `Text:\n${text}`
 		const message = await openai.beta.threads.messages.create(thread.id, {
 			role: "user",
-			content: `${title}\n${source}\n\n${text}`,
+			content,
 		})
 		let run = await openai.beta.threads.runs.createAndPoll(thread.id, {
 			assistant_id: assistant.id,
@@ -38,7 +44,8 @@ export async function ai(title, source, text) {
 			res.delay = run.usage.total_tokens / 30e3 * 60e3
 			return res
 		} else {
-			log('failed to summarize', run.last_error || run)
+			log('AI fail', run.last_error || run)
+			await sleep(30e3)
 		}
 	}
 }
