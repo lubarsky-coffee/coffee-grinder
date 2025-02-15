@@ -9,12 +9,14 @@ import { topics, topicsMap } from '../config/topics.ts'
 import { fetchArticle } from './fetch-article.ts'
 import { htmlToText } from './html-to-text.ts'
 import { ai } from './ai.ts'
+import { browseArchive, finalyze } from './browse-archive.ts'
 
 export async function summarize() {
-	news.forEach((e, i) => e.id = e.id ?? i + 1)
-	let order = e => (topics[e.topic]?.id ?? 99) * 10 + (+e.priority ?? 99)
+	// news.forEach((e, i) => e.id = e.id ?? i + 1)
+
+	let order = e => (+e.sqk || 999) * 1000 + (topics[e.topic]?.id ?? 99) * 10 + (+e.priority || 10)
 	news.sort((a, b) => order(a) - order(b))
-	news.forEach((e, i) => e.sqk = i + 3)
+	news.forEach((e, i) => e.sqk ||= topics[e.topic] ? i + 3 : '')
 
 	let list = news.filter(e => e.url && !e.summary && e.topic !== 'other')
 
@@ -42,8 +44,8 @@ export async function summarize() {
 		// }
 
 		if (e.url) {
-			log('Fetching', e.source ?? '', 'article...')
-			let html = await fetchArticle(e.url)
+			log('Fetching', e.source || '', 'article...')
+			let html = await fetchArticle(e.url) || await browseArchive(e.url)
 			if (html) {
 				log('got', html.length, 'chars')
 				fs.writeFileSync(`articles/${e.sqk}.html`, `<!--\n${e.url}\n-->\n${html}`)
@@ -67,7 +69,7 @@ export async function summarize() {
 				e.topic ||= topicsMap[res.topic]
 				e.priority ||= res.priority
 				e.titleRu ||= res.titleRu
-				e.summary = e.text && res.summary
+				e.summary = res.summary
 				e.aiTopic = topicsMap[res.topic]
 				e.aiPriority = res.priority
 			}
@@ -80,6 +82,7 @@ export async function summarize() {
 			stats.ok++
 		}
 	}
+	finalyze()
 	log('\n', stats)
 }
 

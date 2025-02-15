@@ -30,7 +30,7 @@ export async function getFile(folderId, name) {
 
 export async function trashFile(fileId) {
 	await init
-	return drive.files.trash({ fileId })
+	return drive.files.delete({ fileId })
 }
 
 export async function copyFile(fileId, folderId, name) {

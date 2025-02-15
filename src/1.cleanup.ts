@@ -1,4 +1,4 @@
-import { news, save } from './store.ts'
+import { news } from './store.ts'
 import { deletePresentation } from './google-slides.ts'
 import { sleep } from './sleep.ts'
 

@@ -1,1 +1,0 @@
-npm run audio > logs/audio.log

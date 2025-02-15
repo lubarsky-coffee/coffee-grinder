@@ -1,5 +1,4 @@
 import { log } from './log.ts'
-// import { paywalled } from '../config/agencies.ts'
 
 export async function fetchArticle(url) {
 	for (let i = 0; i < 3; i++) {

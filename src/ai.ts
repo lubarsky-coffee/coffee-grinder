@@ -17,16 +17,11 @@ async function initialize() {
 }
 let init = initialize()
 
-export async function ai({ url, titleEn, titleRu, text, source }) {
+export async function ai({ url, text }) {
 	await init
 	for (let i = 0; i < 3; i++) {
 		let thread = await openai.beta.threads.create()
-		let title = titleEn || titleRu
-		let content = ''
-		if (url) content += `URL: ${url}\n`
-		if (title) content += `Title: ${title}\n`
-		if (source) content += `Source: ${source}\n`
-		content += `Text:\n${text}`
+		let content = `URL: ${url}\nText:\n${text}`
 		const message = await openai.beta.threads.messages.create(thread.id, {
 			role: "user",
 			content,
