@@ -5,12 +5,12 @@
   "main": "index.ts",
   "type": "module",
   "scripts": {
-    "start": "node --env-file=.env --no-warnings src/index.ts",
-    "cleanup": "node --env-file=.env --no-warnings src/1.cleanup.ts",
-    "load": "node --env-file=.env --no-warnings src/load.ts",
-    "summarize": "node --env-file=.env --no-warnings src/2.summarize.ts",
-    "slides": "node --env-file=.env --no-warnings src/3.slides.ts",
-    "audio": "node --env-file=.env --no-warnings src/4.audio.ts"
+    "start": "node -r dotenv/config --no-warnings src/index.ts",
+    "cleanup": "node -r dotenv/config --no-warnings src/1.cleanup.ts",
+    "load": "node -r dotenv/config --no-warnings src/load.ts",
+    "summarize": "node -r dotenv/config --no-warnings src/2.summarize.ts",
+    "slides": "node -r dotenv/config --no-warnings src/3.slides.ts",
+    "audio": "node -r dotenv/config --no-warnings src/4.audio.ts"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +21,7 @@
     "@googleapis/slides": "^1.2.0",
     "@types/node": "^22.13.0",
     "axios": "^1.7.9",
+    "dotenv": "^16.4.7",
     "elevenlabs": "^1.50.4",
     "google-auth-library": "^9.15.1",
     "html-to-text": "^9.0.5",

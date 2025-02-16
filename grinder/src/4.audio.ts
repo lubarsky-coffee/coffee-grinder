@@ -13,7 +13,7 @@ export async function audio() {
 		log(`\n(${i + 1}/${list.length})`, `${event.sqk}. ${event.titleEn || event.titleRu}`)
 
 		if (event.summary) {
-			log('Speaking', event.summary.length, 'bytes...')
+			log('Speaking', event.summary.length, 'chars...')
 			await speak(event.sqk, event.summary)
 		}
 	}

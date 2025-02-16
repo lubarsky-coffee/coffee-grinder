@@ -49,7 +49,7 @@ export async function slides() {
 	}
 
 	let screenshots = list.map(e => `${e.sqk}\n${e.url}\n`).join('')
-	fs.writeFileSync('screenshots.txt', screenshots)
+	fs.writeFileSync('../screenshots.txt', screenshots)
 }
 
 if (process.argv[1].endsWith('slides.ts')) slides()

@@ -16,7 +16,7 @@ export async function speak(id, text: string) {
 				text,
 				model_id: "eleven_multilingual_v2",
 			})
-			let fileStream = createWriteStream(`audio/${id}.mp3`)
+			let fileStream = createWriteStream(`../audio/${id}.mp3`)
 			audio.pipe(fileStream);
 			fileStream.on('finish', resolve)
 			fileStream.on('error', error)
