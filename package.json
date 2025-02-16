@@ -6,13 +6,11 @@
   "type": "module",
   "scripts": {
     "start": "node --env-file=.env --no-warnings src/index.ts",
-    "browse": "node --env-file=.env --no-warnings src/browse.ts",
     "cleanup": "node --env-file=.env --no-warnings src/1.cleanup.ts",
     "load": "node --env-file=.env --no-warnings src/load.ts",
     "summarize": "node --env-file=.env --no-warnings src/2.summarize.ts",
-    "merge": "node --env-file=.env --no-warnings src/3.merge.ts",
-    "slides": "node --env-file=.env --no-warnings src/4.slides.ts",
-    "audio": "node --env-file=.env --no-warnings src/5.audio.ts"
+    "slides": "node --env-file=.env --no-warnings src/3.slides.ts",
+    "audio": "node --env-file=.env --no-warnings src/4.audio.ts"
   },
   "keywords": [],
   "author": "",

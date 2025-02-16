@@ -4,21 +4,21 @@ import { nanoid } from 'nanoid'
 import { log } from './log.ts'
 import { sleep } from './sleep.ts'
 import { auth } from './google-auth.ts'
-import { copyFile, trashFile, getFile } from './google-drive.ts'
-import { rootFolderId, presentationName, templatePresentationId, templateSlideId, templateTableId } from '../config/google-drive.ts'
+import { copyFile, moveFile, getFile } from './google-drive.ts'
+import { rootFolderId, presentationName, templatePresentationId, templateSlideId, templateTableId, archiveFolderId } from '../config/google-drive.ts'
 
 let slides, presentationId
 async function initialize() {
 	slides = await Slides.slides({ version: 'v1', auth })
-	presentationId = (await getFile(rootFolderId, 'today'))?.id
+	presentationId = (await getFile(rootFolderId, presentationName))?.id
 }
 let init = initialize()
 
-export async function deletePresentation() {
+export async function archivePresentation(name) {
 	await init
 	if (!presentationId) return
-	log('Deleting presentation...')
-	await trashFile(presentationId)
+	log('Archiving presentation...')
+	await moveFile(presentationId, archiveFolderId, name)
 	presentationId = null
 }
 

@@ -1,2 +1,3 @@
-npm run slides > logs/slides.log
-npm run audio > logs/audio.log
+call npm run slides > logs/slides.log
+call npm run audio > logs/audio.log
+pause

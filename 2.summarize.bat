@@ -1,1 +1,2 @@
-npm run summarize > logs/summarize.log
+call npm run summarize > logs/summarize.log
+pause
