@@ -5,12 +5,12 @@
   "main": "index.ts",
   "type": "module",
   "scripts": {
-    "start": "node -r dotenv/config --no-warnings src/index",
-    "cleanup": "node -r dotenv/config --no-warnings src/1.cleanup",
-    "load": "node -r dotenv/config --no-warnings src/load",
-    "summarize": "node -r dotenv/config --no-warnings src/2.summarize",
-    "slides": "node -r dotenv/config --no-warnings src/3.slides",
-    "audio": "node -r dotenv/config --no-warnings src/4.audio"
+    "start": "node -r dotenv/config --no-warnings --experimental-fetch src/index",
+    "cleanup": "node -r dotenv/config --no-warnings --experimental-fetch src/1.cleanup",
+    "load": "node -r dotenv/config --no-warnings --experimental-fetch src/load",
+    "summarize": "node -r dotenv/config --no-warnings --experimental-fetch src/2.summarize",
+    "slides": "node -r dotenv/config --no-warnings --experimental-fetch src/3.slides",
+    "audio": "node -r dotenv/config --no-warnings --experimental-fetch src/4.audio"
   },
   "keywords": [],
   "author": "",
