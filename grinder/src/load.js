@@ -1,9 +1,9 @@
 import fs from 'fs'
 import { xml2json } from 'xml-js'
 
-import { log } from './log.ts'
-import { news } from './store.ts'
-import feeds from '../config/feeds.ts'
+import { log } from './log.js'
+import { news } from './store.js'
+import feeds from '../config/feeds.js'
 
 async function get({ url }) {
 	return await (await fetch(url)).text()
@@ -75,4 +75,4 @@ export async function load() {
 	return news
 }
 
-if (process.argv[1].endsWith('load.ts')) load()
+if (process.argv[1].endsWith('load')) load()

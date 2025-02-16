@@ -1,11 +1,11 @@
 import Slides from '@googleapis/slides'
 import { nanoid } from 'nanoid'
 
-import { log } from './log.ts'
-import { sleep } from './sleep.ts'
-import { auth } from './google-auth.ts'
-import { copyFile, moveFile, getFile } from './google-drive.ts'
-import { rootFolderId, presentationName, templatePresentationId, templateSlideId, templateTableId, archiveFolderId } from '../config/google-drive.ts'
+import { log } from './log.js'
+import { sleep } from './sleep.js'
+import { auth } from './google-auth.js'
+import { copyFile, moveFile, getFile } from './google-drive.js'
+import { rootFolderId, presentationName, templatePresentationId, templateSlideId, templateTableId, archiveFolderId } from '../config/google-drive.js'
 
 let slides, presentationId
 async function initialize() {
@@ -113,7 +113,7 @@ export async function addSlide(event) {
 	}
 }
 
-if (process.argv[1].endsWith('google-slides.ts')) {
+if (process.argv[1].endsWith('google-slides')) {
 	// await init
 	// const res = await slides.presentations.get({ presentationId: templatePresentationId })
 	// console.log(JSON.stringify(res.data.slides[res.data.slides.length - 1], null, 2))

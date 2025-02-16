@@ -1,8 +1,8 @@
 import Sheets from '@googleapis/sheets'
 
-import { log } from './log.ts'
-import { sleep } from './sleep.ts'
-import { auth } from './google-auth.ts'
+import { log } from './log.js'
+import { sleep } from './sleep.js'
+import { auth } from './google-auth.js'
 
 let sheets
 async function initialize() {

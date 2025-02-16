@@ -1,12 +1,12 @@
 import { ElevenLabsClient } from "elevenlabs"
 import { createWriteStream } from 'fs'
 
-import { log } from './log.ts'
+import { log } from './log.js'
 
 const client = new ElevenLabsClient()
 
-export async function speak(id, text: string) {
-	return new Promise<void>(async resolve => {
+export async function speak(id, text) {
+	return new Promise(async resolve => {
 		let error = e => {
 			log(e)
 			resolve()

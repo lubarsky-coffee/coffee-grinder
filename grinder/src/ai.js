@@ -1,9 +1,9 @@
 import OpenAI from 'openai'
 
-import { log } from './log.ts'
-import { sleep } from './sleep.ts'
-import { load } from './google-sheets.ts'
-import { spreadsheetId, aiSheet } from '../config/google-drive.ts'
+import { log } from './log.js'
+import { sleep } from './sleep.js'
+import { load } from './google-sheets.js'
+import { spreadsheetId, aiSheet } from '../config/google-drive.js'
 
 let openai = new OpenAI()
 let assistant

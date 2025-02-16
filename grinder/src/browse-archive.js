@@ -3,8 +3,8 @@ import os from 'os'
 import { dirname } from 'path'
 import { fileURLToPath } from 'url'
 
-import { log } from './log.ts'
-import { sleep } from './sleep.ts'
+import { log } from './log.js'
+import { sleep } from './sleep.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)

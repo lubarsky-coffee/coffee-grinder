@@ -1,5 +1,6 @@
 @echo off
 cd grinder
+fnm use
 git pull
 call npm i
 del ..\audio\*.mp3 >nul 2>&1

@@ -1,7 +1,7 @@
-import { log } from './log.ts'
-import { news } from './store.ts'
-import { speak } from './eleven.ts'
-import { topics } from '../config/topics.ts'
+import { log } from './log.js'
+import { news } from './store.js'
+import { speak } from './eleven.js'
+import { topics } from '../config/topics.js'
 
 export async function audio() {
 	// news.forEach((e, i) => e.id = e.id ?? i + 1)
@@ -19,4 +19,4 @@ export async function audio() {
 	}
 }
 
-if (process.argv[1].endsWith('audio.ts')) audio()
+if (process.argv[1].endsWith('audio')) audio()

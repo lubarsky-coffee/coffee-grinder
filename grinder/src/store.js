@@ -1,8 +1,8 @@
 import { proxy, subscribe } from 'valtio/vanilla'
 
-import { log } from './log.ts'
-import { loadTable, saveTable } from './google-sheets.ts'
-import { spreadsheetId, newsSheet } from '../config/google-drive.ts'
+import { log } from './log.js'
+import { loadTable, saveTable } from './google-sheets.js'
+import { spreadsheetId, newsSheet } from '../config/google-drive.js'
 
 export let news = []
 // try {

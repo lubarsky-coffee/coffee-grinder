@@ -1,15 +1,15 @@
 import fs from 'fs'
 
-import { log } from './log.ts'
-import { sleep } from './sleep.ts'
-import { news } from './store.ts'
-import { topics, topicsMap } from '../config/topics.ts'
-// import { restricted } from '../config/agencies.ts'
-// import { decodeGoogleNewsUrl } from './google-news.ts'
-import { fetchArticle } from './fetch-article.ts'
-import { htmlToText } from './html-to-text.ts'
-import { ai } from './ai.ts'
-import { browseArchive, finalyze } from './browse-archive.ts'
+import { log } from './log.js'
+import { sleep } from './sleep.js'
+import { news } from './store.js'
+import { topics, topicsMap } from '../config/topics.js'
+// import { restricted } from '../config/agencies.js'
+// import { decodeGoogleNewsUrl } from './google-news.js'
+import { fetchArticle } from './fetch-article.js'
+import { htmlToText } from './html-to-text.js'
+import { ai } from './ai.js'
+import { browseArchive, finalyze } from './browse-archive.js'
 
 export async function summarize() {
 	// news.forEach((e, i) => e.id = e.id ?? i + 1)
@@ -86,4 +86,4 @@ export async function summarize() {
 	log('\n', stats)
 }
 
-if (process.argv[1].endsWith('summarize.ts')) summarize()
+if (process.argv[1].endsWith('summarize')) summarize()

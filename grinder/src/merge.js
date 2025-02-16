@@ -1,8 +1,8 @@
-import { news } from './store.ts'
-import { log } from './log.ts'
-import { loadTable } from './google-sheets.ts'
-import { spreadsheetId, axiomSheet } from '../config/google-drive.ts'
-import { topicsMap } from '../config/topics.ts'
+import { news } from './store.js'
+import { log } from './log.js'
+import { loadTable } from './google-sheets.js'
+import { spreadsheetId, axiomSheet } from '../config/google-drive.js'
+import { topicsMap } from '../config/topics.js'
 
 export async function merge() {
 	let input = await loadTable(spreadsheetId, axiomSheet)
@@ -25,4 +25,4 @@ export async function merge() {
 	})
 }
 
-if (process.argv[1].endsWith('merge.ts')) await merge()
+if (process.argv[1].endsWith('merge')) await merge()

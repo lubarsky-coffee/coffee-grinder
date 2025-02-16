@@ -1,6 +1,6 @@
 import { JSDOM } from 'jsdom'
 
-import { log } from './log.ts'
+import { log } from './log.js'
 
 export async function decodeGoogleNewsUrl(url) {
 	for (let i = 0; i < 5; i++) {

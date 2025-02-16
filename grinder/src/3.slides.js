@@ -1,10 +1,10 @@
 import fs from 'fs'
 
-import { log } from './log.ts'
-import { news } from './store.ts'
-import { speak } from './eleven.ts'
-import { topics } from '../config/topics.ts'
-import { presentationExists, createPresentation, addSlide } from './google-slides.ts'
+import { log } from './log.js'
+import { news } from './store.js'
+import { speak } from './eleven.js'
+import { topics } from '../config/topics.js'
+import { presentationExists, createPresentation, addSlide } from './google-slides.js'
 
 export async function slides() {
 	// news.forEach((e, i) => e.id = e.id ?? i + 1)
@@ -52,4 +52,4 @@ export async function slides() {
 	fs.writeFileSync('../screenshots.txt', screenshots)
 }
 
-if (process.argv[1].endsWith('slides.ts')) slides()
+if (process.argv[1].endsWith('slides')) slides()

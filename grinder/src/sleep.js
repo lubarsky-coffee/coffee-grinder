@@ -1,4 +1,4 @@
-import { log } from './log.ts'
+import { log } from './log.js'
 
 export function sleep(ms) {
 	if (ms <= 0) return

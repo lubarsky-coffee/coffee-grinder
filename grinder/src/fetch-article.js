@@ -1,4 +1,4 @@
-import { log } from './log.ts'
+import { log } from './log.js'
 
 export async function fetchArticle(url) {
 	for (let i = 0; i < 3; i++) {

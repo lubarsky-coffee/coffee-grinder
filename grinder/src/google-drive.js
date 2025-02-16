@@ -1,7 +1,7 @@
 import Drive from '@googleapis/drive'
 
-import { log } from './log.ts'
-import { auth } from './google-auth.ts'
+import { log } from './log.js'
+import { auth } from './google-auth.js'
 
 async function initialize() {
 	return await Drive.drive({ version: 'v3', auth })
