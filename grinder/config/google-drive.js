@@ -6,4 +6,6 @@ export let templatePresentationId = '1ml6mqzx-mzL9v86-cppjFplrI-l4mIQq1JvQ0OaxFe
 export let templateSlideId = 'p'
 export let templateTableId = 'g32d1f8c10a8_0_0'
 export let presentationName = 'coffee-maker'
+export let audioFolderName = 'audio'
+export let imageFolderName = 'img'
 export let archiveFolderId = '1pNa15MULvOIaGqeQAYfxN9e7FX5cLlgR'

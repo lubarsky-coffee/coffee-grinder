@@ -2,6 +2,7 @@ import { ElevenLabsClient } from "elevenlabs"
 import { createWriteStream } from 'fs'
 
 import { log } from './log.js'
+import { audioFolderName } from "../config/google-drive.js"
 
 const client = new ElevenLabsClient()
 
@@ -16,7 +17,7 @@ export async function speak(id, text) {
 				text,
 				model_id: "eleven_multilingual_v2",
 			})
-			let fileStream = createWriteStream(`../audio/${id}.mp3`)
+			let fileStream = createWriteStream(`../${audioFolderName}/${id}.mp3`)
 			audio.pipe(fileStream);
 			fileStream.on('finish', resolve)
 			fileStream.on('error', error)

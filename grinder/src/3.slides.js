@@ -27,6 +27,10 @@ export async function slides() {
 		return topicSqk
 	}, {})
 
+	let screenshots = list.map(e => `${e.sqk}\n${e.url}\n`).join('')
+	fs.writeFileSync('../img/screenshots.txt', screenshots)
+	log('Screenshots list prepared')
+
 	for (let i = 0; i < list.length; i++) {
 		let event = list[i]
 		event.topicSqk = ++topicSqk[event.topic]
@@ -47,9 +51,6 @@ export async function slides() {
 		 })
 		// event.sqk = sqk++
 	}
-
-	let screenshots = list.map(e => `${e.sqk}\n${e.url}\n`).join('')
-	fs.writeFileSync('../screenshots.txt', screenshots)
 }
 
 if (process.argv[1].endsWith('slides')) slides()

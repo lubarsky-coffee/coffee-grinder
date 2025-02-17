@@ -1,8 +1,8 @@
 import { news } from './store.js'
 import { archivePresentation } from './google-slides.js'
 import { sleep } from './sleep.js'
-import { copyFile } from './google-drive.js'
-import { spreadsheetId, archiveFolderId } from '../config/google-drive.js'
+import { copyFile, getFile, moveFile } from './google-drive.js'
+import { rootFolderId, spreadsheetId, archiveFolderId, audioFolderName, imageFolderName } from '../config/google-drive.js'
 import { log } from './log.js'
 
 export async function cleanup() {
@@ -13,6 +13,16 @@ export async function cleanup() {
 	await sleep(1)
 	news.length = 0
 	archivePresentation(name)
+	let audio = await getFile(rootFolderId, audioFolderName)
+	if (audio) {
+		log('Archiving audio...')
+		await moveFile(audio.id, archiveFolderId, `${name}_${audioFolderName}`)
+	}
+	let image = await getFile(rootFolderId, imageFolderName)
+	if (image) {
+		log('Archiving images...')
+		await moveFile(image.id, archiveFolderId, `${name}_${imageFolderName}`)
+	}
 }
 
 if (process.argv[1].endsWith('cleanup')) cleanup()
