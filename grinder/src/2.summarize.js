@@ -9,7 +9,7 @@ import { topics, topicsMap } from '../config/topics.js'
 import { fetchArticle } from './fetch-article.js'
 import { htmlToText } from './html-to-text.js'
 import { ai } from './ai.js'
-import { browseArchive, finalyze } from './browse-archive.js'
+import { browseArticle, finalyze } from './browse-article.js'
 
 export async function summarize() {
 	// news.forEach((e, i) => e.id = e.id ?? i + 1)
@@ -45,7 +45,7 @@ export async function summarize() {
 
 		if (e.url) {
 			log('Fetching', e.source || '', 'article...')
-			let html = await fetchArticle(e.url) || await browseArchive(e.url)
+			let html = await fetchArticle(e.url) || await browseArticle(e.url)
 			if (html) {
 				log('got', html.length, 'chars')
 				fs.writeFileSync(`articles/${e.sqk}.html`, `<!--\n${e.url}\n-->\n${html}`)
@@ -59,7 +59,7 @@ export async function summarize() {
 			}
 		}
 
-		if (e.text) {
+		if (e.text?.length > 400) {
 			await sleep(last.ai.time + last.ai.delay - Date.now())
 			last.ai.time = Date.now()
 			log('Summarizing', e.text.length, 'chars...')

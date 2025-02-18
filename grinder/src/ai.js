@@ -34,12 +34,17 @@ export async function ai({ url, text }) {
 			// log(run)
 			// log(messages.data[0].content)
 			let json = messages.data[0].content[0].text.value.replace('```json', '').replace('```', '')
-			let res = JSON.parse(json)
-			log('got', res.summary.length, 'chars,', run.usage.total_tokens, 'tokens used')
-			res.delay = run.usage.total_tokens / 30e3 * 60e3
-			return res
+			try {
+				let res = JSON.parse(json)
+				log('got', res.summary.length, 'chars,', run.usage.total_tokens, 'tokens used')
+				res.delay = run.usage.total_tokens / 30e3 * 60e3
+				return res
+			} catch(e) {
+				log('AI fail\n', json, '\n', e)
+				return null
+			}
 		} else {
-			log('AI fail', run.last_error || run)
+			log('AI fail\n', run.last_error || run)
 			await sleep(30e3)
 		}
 	}

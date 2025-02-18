@@ -1,9 +1,11 @@
 import { log } from './log.js'
 
 export async function fetchArticle(url) {
-	for (let i = 0; i < 3; i++) {
+	for (let i = 0; i < 2; i++) {
 		try {
-			let response = await fetch(url)
+			let response = await fetch(url, {
+				signal: AbortSignal.timeout(10e3)
+			})
 			if (response.ok) {
 				return await response.text()
 			} else {
