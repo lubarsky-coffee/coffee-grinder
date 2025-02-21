@@ -1,33 +1,78 @@
-import { JSDOM } from 'jsdom'
+import fs from 'fs'
+import { xml2json } from 'xml-js'
 
 import { log } from './log.js'
+import { news } from './store.js'
+import feeds from '../config/feeds.js'
 
-export async function decodeGoogleNewsUrl(url) {
-	for (let i = 0; i < 5; i++) {
-		try {
-			let parsedUrl = new URL(url)
-			let id = parsedUrl.pathname.split('/').pop()
-			let response = await fetch(`https://news.google.com/articles/${id}`)
-			if (!response.ok) {
-				log(`Fetch failed: ${response.status} ${response.statusText}`)
-				if (response.status === 429) return
-			}
-			let html = await response.text()
-			let dom = new JSDOM(html)
-			let div = dom.window.document.querySelector('c-wiz > div[jscontroller]')
-			let [sg, ts] = [div.getAttribute('data-n-a-sg'), div.getAttribute('data-n-a-ts')]
-			let payload = [
-				'Fbv4je',
-				`["garturlreq",[["X","X",["X","X"],null,null,1,1,"US:en",null,1,null,null,null,null,null,0,1],"X","X",1,[1,1,1],1,1,null,0,0,null,0],"${id}",${ts},"${sg}"]`,
-			]
-			let json = await (await fetch('https://news.google.com/_/DotsSplashUi/data/batchexecute', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
-				body: new URLSearchParams({ 'f.req': JSON.stringify([[payload]]) }).toString(),
-			})).text()
-			return JSON.parse(JSON.parse(json.split('\n\n')[1].slice(0))[0][2])[1]
-		} catch(e) {
-			log('Fetch failed:', e)
-		}
-	}
+async function get({ url }) {
+	return await (await fetch(url)).text()
 }
+
+function parse(xml) {
+	// log('Parsing', xml.length, 'bytes...')
+	let feed = JSON.parse(xml2json(xml, { compact: true }))
+	let items = feed?.rss?.channel?.item?.map(event => {
+		return {
+			titleEn: event.title?._text, // .replace(` - ${event.source?._text}`, ''),
+			source: event.source?._text,
+			url: event.link?._text,
+			date: new Date(event.pubDate._text),
+		}
+		// try {
+		// 	let json = xml2json(event.description?._text, { compact: true })
+		// 	let articles = JSON.parse(json).ol.li.map(({ a, font }) => ({
+		// 		title: a._text,
+		// 		url: a._attributes.href,
+		// 		source: font._text,
+		// 	}))
+		// 	return {
+		// 		articles,
+		// 		pubDate: new Date(event.pubDate._text),
+		// 	}
+		// } catch(e) {
+		// 	return {
+		// 		articles: [{
+		// 			title: event.title?._text,
+		// 			url: event.link?._text,
+		// 			source: event.source?._text,
+		// 		}],
+		// 		pubDate: new Date(event.pubDate._text),
+		// 	}
+		// }
+	})
+	return items
+}
+
+function mergeInto(target, source) {
+	let index = {}
+	let seen = event => {
+		index[event.titleEn] = event
+		index[event.url] = event
+	}
+	target.forEach(seen)
+	source.forEach(event => {
+		if (index[event.titleEn] || index[event.url]) return
+		seen(event)
+		target.push(event)
+	})
+	return target
+}
+
+export async function load() {
+	log('Loading', feeds.length, 'feeds...')
+	let raw = await Promise.all(feeds.map(get))
+	let newsN = news.length
+	let now = new Date()
+	let days = now.getDay() ? 1 : 3
+	let incoming = raw.map(parse)
+	.map(a => a.filter(e => e.date > now - days*24*60*60e3))
+	.map((a, i) => a.slice(0, feeds[i].max))
+	.flat()
+	mergeInto(news, incoming)
+	news.forEach((e, i) => e.id = e.id ?? i + 1)
+	log('\ngot', news.length, `(+${news.length - newsN})`, 'events')
+	return news
+}
+
+if (process.argv[1].endsWith('load')) load()
