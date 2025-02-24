@@ -10,11 +10,11 @@ import { summarize } from './2.summarize.js'
 // 	cleanup()
 // }
 
-news.forEach((e, i) => news[i] = {})
-await sleep(1)
-news.length = 0
+// news.forEach((e, i) => news[i] = {})
+// await sleep(1)
+// news.length = 0
 
 await load()
 await summarize()
-// await slides()
-// await audio()
+await slides()
+await audio()
