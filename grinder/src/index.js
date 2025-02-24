@@ -14,7 +14,7 @@ import { summarize } from './2.summarize.js'
 // await sleep(1)
 // news.length = 0
 
-await load()
+// await load()
 await summarize()
 await slides()
 await audio()
