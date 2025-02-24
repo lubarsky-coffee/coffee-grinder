@@ -64,7 +64,6 @@ export async function browseArticle(url) {
 
 		if (!html) {
 			log('browsing source...')
-			page = await context.newPage()
 			try {
 				await page.goto(url, {
 					waitUntil: 'load',
