@@ -78,6 +78,9 @@ export async function summarize() {
 			stats.ok++
 		}
 	}
+	let order = e => (+e.sqk || 999) * 1000 + (topics[e.topic]?.id ?? 99) * 10 + (+e.priority || 10)
+	news.sort((a, b) => order(a) - order(b))
+
 	finalyze()
 	log('\n', stats)
 }
