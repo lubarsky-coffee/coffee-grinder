@@ -2,7 +2,9 @@ import { proxy, subscribe } from 'valtio/vanilla'
 
 import { log } from './log.js'
 import { loadTable, saveTable } from './google-sheets.js'
-import { spreadsheetId, newsSheet } from '../config/google-drive.js'
+import { mainSpreadsheetId, autoSpreadsheetId, newsSheet } from '../config/google-drive.js'
+
+let spreadsheetId = process.argv[2].endsWith('auto') ? autoSpreadsheetId : mainSpreadsheetId
 
 export let news = []
 // try {

@@ -16,7 +16,7 @@ function parse(xml) {
 		return {
 			titleEn: event.title?._text, // .replace(` - ${event.source?._text}`, ''),
 			source: event.source?._text,
-			url: event.link?._text,
+			gnUrl: event.link?._text,
 			date: new Date(event.pubDate._text),
 		}
 		// try {
@@ -48,11 +48,11 @@ function mergeInto(target, source) {
 	let index = {}
 	let seen = event => {
 		index[event.titleEn] = event
-		index[event.url] = event
+		index[event.gnUrl] = event
 	}
 	target.forEach(seen)
 	source.forEach(event => {
-		if (index[event.titleEn] || index[event.url]) return
+		if (index[event.titleEn] || index[event.gnUrl]) return
 		seen(event)
 		target.push(event)
 	})
@@ -64,7 +64,7 @@ export async function load() {
 	let raw = await Promise.all(feeds.map(get))
 	let newsN = news.length
 	let now = new Date()
-	let days = now.getDay() ? 1 : 3
+	let days = now.getDay() ? 1.5 : 3.5
 	let incoming = raw.map(parse)
 	.map(a => a.filter(e => e.date > now - days*24*60*60e3))
 	.map((a, i) => a.slice(0, feeds[i].max))

@@ -24,20 +24,20 @@ async function initialize() {
 			`--load-extension=${extension}`,
 		],
 	})
-	return context
+	let page = await context.newPage()
+	return { context, page }
 }
 let init = initialize()
 
 export async function finalyze() {
-	let context = await init
+	let { context } = await init
 	context?.close()
 }
 
 export async function browseArticle(url) {
-	let context = await init
+	let { page } = await init
 	try {
 		log('Browsing archive...')
-		let page = await context.newPage()
 		await page.goto(`https://archive.ph/${url.split('?')[0]}`, {
 			waitUntil: 'load',
 		})

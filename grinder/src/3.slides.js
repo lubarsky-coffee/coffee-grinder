@@ -17,6 +17,10 @@ export async function slides() {
 		await createPresentation()
 	}
 
+	let order = e => (+e.sqk || 999) * 1000 + (topics[e.topic]?.id ?? 99) * 10 + (+e.priority || 10)
+	news.sort((a, b) => order(a) - order(b))
+	news.forEach((e, i) => e.sqk ||= topics[e.topic] ? i + 3 : '')
+
 	// let list = news.filter(e => !e.sqk && e.titleRu && topics[e.topic])
 	let list = news.filter(e => topics[e.topic])
 
