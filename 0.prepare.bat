@@ -1,9 +1,9 @@
 @echo off
 git pull
-fnm use 2>nul
-call npm i --loglevel=error
 
 cd grinder
+fnm use 2>nul
+call npm i --loglevel=error
 call npm run cleanup > logs/cleanup.log
 
 del ..\audio\*.mp3 >nul 2>&1
