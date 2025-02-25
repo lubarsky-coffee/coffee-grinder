@@ -6,8 +6,8 @@
   "type": "module",
   "scripts": {
     "start": "node -r dotenv/config --no-warnings --experimental-fetch src/index",
-    "cleanup": "node -r dotenv/config --no-warnings --experimental-fetch src/1.cleanup",
-    "load": "node -r dotenv/config --no-warnings --experimental-fetch src/load",
+    "cleanup": "node -r dotenv/config --no-warnings --experimental-fetch src/0.cleanup",
+    "load": "node -r dotenv/config --no-warnings --experimental-fetch src/1.load",
     "summarize": "node -r dotenv/config --no-warnings --experimental-fetch src/2.summarize",
     "slides": "node -r dotenv/config --no-warnings --experimental-fetch src/3.slides",
     "audio": "node -r dotenv/config --no-warnings --experimental-fetch src/4.audio"

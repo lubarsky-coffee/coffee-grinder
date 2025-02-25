@@ -1,14 +1,15 @@
 import OpenAI from 'openai'
 
+import { spreadsheetId } from './store.js'
 import { log } from './log.js'
 import { sleep } from './sleep.js'
 import { load } from './google-sheets.js'
-import { mainSpreadsheetId, aiSheet } from '../config/google-drive.js'
+import { aiSheet } from '../config/google-drive.js'
 
 let openai = new OpenAI()
 let assistant
 async function initialize() {
-	let instructions = (await load(mainSpreadsheetId, aiSheet)).map(x => x.join('\t')).join('\n')
+	let instructions = (await load(spreadsheetId, aiSheet)).map(x => x.join('\t')).join('\n')
 	assistant = await openai.beta.assistants.create({
 		name: "Summarizer",
 		instructions,

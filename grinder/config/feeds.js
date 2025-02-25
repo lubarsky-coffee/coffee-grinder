@@ -13,6 +13,6 @@ export default [
 	},
 	{ // Technology
 		url: "https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGRqTVhZU0FtVnVHZ0pWVXlnQVAB",
-		max: 5,
+		max: 6,
 	},
 ]

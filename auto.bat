@@ -2,6 +2,8 @@
 git pull
 fnm use 2>nul
 call npm i --loglevel=error
+
+cd grinder
 call npm start auto > logs/auto.log
 
 cd ../img
