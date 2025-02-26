@@ -1,4 +1,3 @@
-import fs from 'fs'
 import { xml2json } from 'xml-js'
 
 import { log } from './log.js'
@@ -56,21 +55,45 @@ function mergeInto(target, source) {
 		seen(event)
 		target.push(event)
 	})
-	return target
+}
+
+function intersect(target, source) {
+	let index = {}
+	let seen = event => {
+		index[event.titleEn] = event
+		index[event.gnUrl] = event
+	}
+	source.forEach(seen)
+	target.forEach(event => {
+		if (!index[event.titleEn] && !index[event.gnUrl]) {
+			event.priority = 9
+		}
+	})
 }
 
 export async function load() {
 	log('Loading', feeds.length, 'feeds...')
 	let raw = await Promise.all(feeds.map(get))
-	let newsN = news.length
-	let now = new Date()
-	let days = now.getDay() ? 1.5 : 3.5
+
+	let [date, time] = new Date().toISOString().split('T')
+	let cutoff = new Date(date + 'T00:00:00Z')
+	if (time < '12:00') {
+		cutoff -= 24*60*60e3
+	}
+	if (new Date(cutoff).getUTCDate() === 0) {
+		cutoff -= 2 * 24*60*60e3
+	}
 	let incoming = raw.map(parse)
-	.map(a => a.filter(e => e.date > now - days*24*60*60e3))
+	.map(a => a.filter(e => e.date >= cutoff))
 	.map((a, i) => a.slice(0, feeds[i].max))
 	.flat()
-	mergeInto(news, incoming)
-	news.forEach((e, i) => e.id = e.id ?? i + 1)
+
+	let newsN = news.length
+	if (newsN) {
+		intersect(news, incoming)
+	} else {
+		news.push(...incoming)
+	}
 	log('\ngot', news.length, `(+${news.length - newsN})`, 'events')
 	return news
 }

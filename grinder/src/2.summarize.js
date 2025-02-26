@@ -12,18 +12,18 @@ import { ai } from './ai.js'
 import { browseArticle, finalyze } from './browse-article.js'
 
 export async function summarize() {
-	// news.forEach((e, i) => e.id = e.id ?? i + 1)
+	news.forEach((e, i) => e.id ||= i + 1)
 
 	let list = news.filter(e => !e.summary && e.topic !== 'other')
 
 	let stats = { ok: 0, fail: 0 }
 	let last = {
-		urlDecode: { time: 0, delay: 30e3, increment: 1000 },
+		urlDecode: { time: 0, delay: 30e3, increment: 900 },
 		ai: { time: 0, delay: 0 },
 	}
 	for (let i = 0; i < list.length; i++) {
 		let e = list[i]
-		log(`\n#${e.id} (${i + 1}/${list.length})`, e.titleEn || e.titleRu || '')
+		log(`\n#${e.id} [${i + 1}/${list.length}]`, e.titleEn || e.titleRu || '')
 
 		if (!e.url /*&& !restricted.includes(e.source)*/) {
 			await sleep(last.urlDecode.time + last.urlDecode.delay - Date.now())
