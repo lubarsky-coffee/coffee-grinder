@@ -28,7 +28,7 @@ export async function slides() {
 		event.topicSqk = topicSqk[event.topic]++
 		let notes = event.topicSqk > (topics[event.topic]?.max || 0) ? 'NOT INDEXED' : ''
 		await addSlide({
-			sqk: event.sqk,
+			sqk,
 			topicId: topics[event.topic]?.id,
 			notes,
 			...event,
