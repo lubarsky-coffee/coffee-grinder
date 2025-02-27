@@ -12,33 +12,22 @@ function parse(xml) {
 	// log('Parsing', xml.length, 'bytes...')
 	let feed = JSON.parse(xml2json(xml, { compact: true }))
 	let items = feed?.rss?.channel?.item?.map(event => {
+		let articles = []
+		try {
+			let json = xml2json(event.description?._text, { compact: true })
+			articles = JSON.parse(json).ol.li.map(({ a, font }) => ({
+				titleEn: a._text,
+				gnUrl: a._attributes.href,
+				source: font._text,
+			}))
+		} catch(e) {}
 		return {
 			titleEn: event.title?._text, // .replace(` - ${event.source?._text}`, ''),
-			source: event.source?._text,
 			gnUrl: event.link?._text,
+			source: event.source?._text,
 			date: new Date(event.pubDate._text),
+			articles,
 		}
-		// try {
-		// 	let json = xml2json(event.description?._text, { compact: true })
-		// 	let articles = JSON.parse(json).ol.li.map(({ a, font }) => ({
-		// 		title: a._text,
-		// 		url: a._attributes.href,
-		// 		source: font._text,
-		// 	}))
-		// 	return {
-		// 		articles,
-		// 		pubDate: new Date(event.pubDate._text),
-		// 	}
-		// } catch(e) {
-		// 	return {
-		// 		articles: [{
-		// 			title: event.title?._text,
-		// 			url: event.link?._text,
-		// 			source: event.source?._text,
-		// 		}],
-		// 		pubDate: new Date(event.pubDate._text),
-		// 	}
-		// }
 	})
 	return items
 }
@@ -63,7 +52,10 @@ function intersect(target, source) {
 		index[event.titleEn] = event
 		index[event.gnUrl] = event
 	}
-	source.forEach(seen)
+	source.forEach(e => {
+		seen(e)
+		e.articles.forEach(seen)
+	})
 	target.forEach(event => {
 		if (!index[event.titleEn] && !index[event.gnUrl]) {
 			event.priority = 9
@@ -72,17 +64,18 @@ function intersect(target, source) {
 }
 
 export async function load() {
-	log('Loading', feeds.length, 'feeds...')
-	let raw = await Promise.all(feeds.map(get))
-
 	let [date, time] = new Date().toISOString().split('T')
 	let cutoff = new Date(date + 'T00:00:00Z')
 	if (time < '12:00') {
-		cutoff -= 24*60*60e3
+		cutoff -= 24 * 60 * 60e3
 	}
 	if (new Date(cutoff).getUTCDate() === 0) {
-		cutoff -= 2 * 24*60*60e3
+		cutoff -= 2 * 24 * 60 * 60e3
 	}
+	log('Loading', feeds.length, 'feeds', 'starting at', new Date(cutoff).toISOString(), '...')
+
+	let raw = await Promise.all(feeds.map(get))
+
 	let incoming = raw.map(parse)
 	.map(a => a.filter(e => e.date >= cutoff))
 	.map((a, i) => a.slice(0, feeds[i].max))
