@@ -18,7 +18,7 @@ export async function summarize() {
 
 	let stats = { ok: 0, fail: 0 }
 	let last = {
-		urlDecode: { time: 0, delay: 30e3, increment: 900 },
+		urlDecode: { time: 0, delay: 30e3, increment: 1000 },
 		ai: { time: 0, delay: 0 },
 	}
 	for (let i = 0; i < list.length; i++) {
