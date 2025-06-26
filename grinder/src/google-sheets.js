@@ -1,7 +1,5 @@
 import Sheets from '@googleapis/sheets'
 
-import { log } from './log.js'
-import { sleep } from './sleep.js'
 import { auth } from './google-auth.js'
 
 let sheets
